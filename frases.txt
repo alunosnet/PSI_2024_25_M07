@@ -1,0 +1,4 @@
+ola
+mundo
+isto é um teste
+isto é uma linha nova
