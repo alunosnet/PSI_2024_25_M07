@@ -48,13 +48,33 @@ def Escrever(lista,nome):
         for i in range(len(lista)):
             escrever.writerow(lista[i]) #grava os dados correspondentes às chaves
 
+def ValidarMatricula(matricula):
+    """Devolve True se a matricula existe ou False se não existir"""
+    for carro in lista_carros:
+        if carro["matricula"] == matricula:
+            return True
+    return False
+
+def ValidarNrMatriculas(matricula):
+    """Devolve o número de pilotos de um carro"""
+    contar = 0
+    for p in lista_pilotos:
+        if p['matricula'] == matricula:
+            contar += 1
+    return contar
+
 def Adicionar():
     op = input("Adicionar [P]iloto ou [C]arro? ")
+    if not op:
+        return
     if op in "cC":
         #ler os dados do carro
         marca     = input("Qual a marca do carro: ")
         modelo    = input("Qual o modelo do carro: ")
         matricula = input("Qual a matrícula do carro: ")
+        if ValidarMatricula(matricula) == True:
+            print("Matrícula já existe")
+            return
         #criar um dicionário
         carro ={
             'marcar'    : marca,
@@ -67,21 +87,59 @@ def Adicionar():
         Escrever(lista_carros,FICHEIRO_CARROS)
     if op in "pP":
         #ler os dados do piloto
-            #verificar se a matrícula do carro existe
+        matricula = input("Introduza a matrícula do veículo: ")
+        #verificar se a matrícula do carro existe
+        if ValidarMatricula(matricula) == False:
+            print("Matrícula introduzia não existe")
+            return
+        #verificar quantos pilotos estão no carro
+        if ValidarNrMatriculas(matricula) >=2:
+            print("Já existe 2 pilotos no carro")
+            return
+        nome = input("Introduza o nome do piloto: ")
+        idade = int(input("Introduza a idade do piloto: "))
+        pais = input("Introduza o país do piloto: ")
         #criar um dicionário
+        piloto ={
+            'nome'      : nome,
+            'idade'     : idade,
+            'pais'      : pais,
+            'matricula' : matricula
+        }
         #adicionar à lista
+        lista_pilotos.append(piloto)
         #escrever no ficheiro dos pilotos
-        pass
+        Escrever(lista_pilotos,FICHEIRO_PILOTOS)
+        print("Piloto foi adicionado com sucesso.")
 
 def Listar():
-    pass
+    op = input("Adicionar [P]iloto ou [C]arro? ")
+    if op in "cC":
+        print(lista_carros)
+    if op in "pP":
+        print(lista_pilotos)
 
 def Pesquisar():
-    pass
+    matricula = input("Qual a matrícula do carro a pesquisar: ")
+    if matricula:
+        #mostrar os pilotos do carro
+        for p in lista_pilotos:
+            if p['matricula'] == matricula:
+                print(p)
+    piloto = input("Qual o nome do piloto a pesquisar: ")
+    if piloto:
+        for p in lista_pilotos:
+            if p['nome'] == piloto:
+                #mostrar o carro do piloto
+                for c in lista_carros:
+                    if p['matricula'] == c['matricula']:
+                        print(c)
+
 
 def Menu():
-    global lista_carros
-    lista_carros = LerFicheiro(FICHEIRO_CARROS)
+    global lista_carros, lista_pilotos
+    lista_carros  = LerFicheiro(FICHEIRO_CARROS)
+    lista_pilotos = LerFicheiro(FICHEIRO_PILOTOS)
     op=0
     while op!=4:
         op = int(input("1.Adicionar\n2.Listar\n3.Pesquisar\n4.Sair"))
