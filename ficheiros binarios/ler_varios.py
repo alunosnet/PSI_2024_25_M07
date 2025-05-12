@@ -11,6 +11,7 @@ import struct
 with open("dados.bin","rb") as ficheiro:
     #ler os dados todos de uma vez só
     dados_binarios = ficheiro.read(28)
+    #esta linha só funciona se os dados forem empacotados da mesma forma
     dados = struct.unpack("20sif",dados_binarios)
 
 #converter a string binária numa string

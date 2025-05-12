@@ -11,12 +11,8 @@ saldo = float(input("Qual o saldo: "))
 #adicionar ao ficheiro (dados.bin)
 with open("dados.bin","ab") as ficheiro:
     #nome -> string -> cada letra 1 byte -> 20 bytes
-    dados_empacotados = struct.pack("20s",nome.encode("utf-8"))
-    ficheiro.write(dados_empacotados)
     #idade -> int -> 4 bytes
-    dados_empacotados = struct.pack("i",idade)
-    ficheiro.write(dados_empacotados)
     #saldo -> float -> 4 bytes
-    dados_empacotados = struct.pack("f",saldo)
+    dados_empacotados = struct.pack("20sif",nome.encode("utf-8"),idade,saldo)
     ficheiro.write(dados_empacotados)
 print("Dados guardados com sucesso")

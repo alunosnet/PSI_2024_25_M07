@@ -11,6 +11,7 @@ with open("dados.bin","rb") as ficheiro:
             dados_binarios = ficheiro.read(28)
             if not dados_binarios:
                 break
+            #esta linha só funciona se os dados forem gravados todos da mesma forma
             dados = struct.unpack("20sif",dados_binarios)
             #converter a string binária numa string
             nome = dados[0].decode('utf-8').rstrip("\x00")
