@@ -72,7 +72,7 @@ def Apagar():
                 preco_binario = f_ler.read(4)
                 raca = struct.unpack("30s",raca_binario)
                 #mostrar ao utilizar
-                print("Raça: ",raca)
+                print("Raça: ",raca[0].decode('utf-8').rstrip("\x00"))
                 #se NÃO é para apagar gravar no ficheiro temp
                 op = input("Pretende apagar este animal? ")
                 if op not in "sS":
@@ -81,13 +81,46 @@ def Apagar():
                     f_escrever.write(genero_binario)
                     f_escrever.write(preco_binario)
     #apagar o ficheiro de dados
-    
+    os.remove(FICHEIRO)
     #mudar o nome do ficheiro temporário
-
+    os.rename("temp.bin",FICHEIRO)
+    print("Animal removido com sucesso")
 
 def Editar():
     """Lista os pets e pergunta se pretende editar"""
-    pass
+    #Abrir o ficheiro para leitura e escrita rb+
+    with open(FICHEIRO,"rb+") as ficheiro:
+        while True:
+            #ler um registo
+            raca_binario = ficheiro.read(30)
+            if not raca_binario:
+                break   #terminar o ciclo chegou ao fim do ficheiro
+            peso_binario = ficheiro.read(4)
+            genero_binario = ficheiro.read(1)
+            preco_binario = ficheiro.read(4)
+            #mostrar ao utilizador
+            raca = struct.unpack("30s",raca_binario)[0]
+            raca = raca.decode("utf-8").rstrip("\x00")
+            peso = struct.unpack("f",peso_binario)[0]
+            genero = struct.unpack("1s",genero_binario)[0]
+            genero = genero.decode("utf-8").rstrip("\x00")
+            preco = struct.unpack("f",preco_binario)[0]
+            print("Pretende editar este animal?")
+            print(f"{raca} - {peso} - {genero} - {preco}")
+            op = input("op? ")
+            #perguntar se quer alterar
+            if op in "sS":
+                raca = input("Nova raça? ")
+                peso = float(input("Novo peso? "))
+                genero = input("Novo género? ")
+                preco = float(input("Novo preço? "))
+                #se alterar gravar novamente o mesmo registo
+                ficheiro.seek(-39,os.SEEK_CUR)
+                ficheiro.write(struct.pack("30s",raca.encode("utf-8")))
+                ficheiro.write(struct.pack("f",peso))
+                ficheiro.write(struct.pack("1s",genero.encode("utf-8")))
+                ficheiro.write(struct.pack("f",preco))
+        
 
 def Menu():
     """Menu principal da aplicação"""
